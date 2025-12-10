@@ -17,9 +17,8 @@
 #define RC_CHECK 1
 
 // Change to the radio channel
-#define RC_LAND 8
-#define RC_STABILIZE 6
-#define RC_LOITER 6
+#define RC_STABILIZE 7
+#define RC_ESTOP 6
 
 class SafetyChecker: public rclcpp::Node{
 public: 
@@ -36,8 +35,8 @@ public:
     bool call_ready = false; 
 
 private: 
-    const std::string RC_LAND_PWM = "LOW"; 
-    const std::string RC_STABILIZE_PWM = "HIGH"; 
+    const std::string RCL_ESTOP_PWM = "HIGH"; 
+    const std::string RC_STABILIZE_PWM = "LOW"; 
     const std::string RC_LOITER_PWM = "HIGH"; 
     rclcpp::Client<std_srvs::srv::Empty>::SharedPtr client_kill_cargo; 
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pub; 

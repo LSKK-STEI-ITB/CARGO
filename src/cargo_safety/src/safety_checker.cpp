@@ -26,6 +26,7 @@ void SafetyChecker::call_kill_cargo_srv(){
 
     if(rclcpp::spin_until_future_complete(this->get_node_base_interface(), future) == rclcpp::FutureReturnCode::SUCCESS){
         RCLCPP_INFO(this->get_logger(), "Service successfully called.");
+        RCLCPP_INFO(this->get_logger(), "Please Re-Run Cargo Core");
     } else {
         RCLCPP_ERROR(this->get_logger(), "Failed to call service.");
     }
@@ -80,6 +81,12 @@ int SafetyChecker::rc_trigger(){
         RCLCPP_ERROR(this->get_logger(), "RC Stabilize Triggered"); 
         return 2 ;
     }
+
+    if(rc_pwm(rc_in_ptr->channels.at(RC_ESTOP - 1), RCL_ESTOP_PWM)){
+        RCLCPP_ERROR(this->get_logger(), "RC Emergency Stop Triggered"); 
+        return 2 ;
+    }
+
 #endif 
 return 0;
 }

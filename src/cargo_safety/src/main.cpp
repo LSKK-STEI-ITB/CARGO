@@ -38,9 +38,9 @@ int main(int argc, char **argv) {
         nh->call_ready = false;
       }
     }
-    rclcpp::spin(nh);
   }
 
+  rclcpp::spin(nh);
 
   rclcpp::shutdown(); // Shutdown after spinning
 }
