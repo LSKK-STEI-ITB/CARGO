@@ -27,10 +27,20 @@ void SafetyChecker::call_kill_cargo_srv(){
 
     if(rclcpp::spin_until_future_complete(this->get_node_base_interface(), future) == rclcpp::FutureReturnCode::SUCCESS){
         RCLCPP_INFO(this->get_logger(), "Service successfully called.");
-        RCLCPP_INFO(this->get_logger(), "Please Re-Run Cargo Core");
     } else {
         RCLCPP_ERROR(this->get_logger(), "Failed to call service.");
     }
+
+
+    auto future2 = client_kill_mission->async_send_request(request);
+
+    if(rclcpp::spin_until_future_complete(this->get_node_base_interface(), future) == rclcpp::FutureReturnCode::SUCCESS){
+        RCLCPP_INFO(this->get_logger(), "Service successfully called.");
+    } else {
+        RCLCPP_ERROR(this->get_logger(), "Failed to call service.");
+    }
+
+    RCLCPP_INFO(this->get_logger(), "Please Re-Run Cargo Core");
 }
 
 bool SafetyChecker::rc_pwm(int val, const std::string &target) {
