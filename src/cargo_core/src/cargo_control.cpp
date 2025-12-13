@@ -63,6 +63,29 @@ void cargo_core::get_alt(rclcpp::Node::SharedPtr nh, double &alt, std::string so
   return;
 }
 
+void cargo_core::wait(rclcpp::Node::SharedPtr nh, const ParamMap &params) {
+    double second = std::get<double>(params.at("s")); // map-frame delta Z
+
+
+    RCLCPP_WARN_STREAM(nh->get_logger(),
+                       "---Waiting for " << second << " seconds.");
+
+    rclcpp::Time initialTime;
+    rclcpp::Time currTime;
+
+    // Ensure node time is initialized
+    do {
+      initialTime = nh->now();
+    } while (initialTime.seconds() < 1.0);
+
+    rclcpp::Rate rate(20); // 20 Hz
+
+    do {
+      currTime = nh->now();
+      rate.sleep();
+    } while ((currTime - initialTime).seconds() < second);
+}
+
 void cargo_core::switch_mode(rclcpp::Node::SharedPtr nh,  const ParamMap &params) {
   const ParamValue &v = params.at("mode");  // get the variant
   std::string mode = std::get<std::string>(v);
