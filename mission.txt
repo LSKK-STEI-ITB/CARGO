@@ -1,5 +1,5 @@
 INITIALIZE
 ARM
 TAKEOFF alt=5.0
-GOTO lat=-8.12 lon=115.32 alt=20
+MOVE x=1.3 y=0.0 z=0.0
 LAND

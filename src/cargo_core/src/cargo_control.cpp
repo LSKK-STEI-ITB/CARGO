@@ -207,6 +207,78 @@ void cargo_core::takeoff(rclcpp::Node::SharedPtr nh, const ParamMap &params){
     }
 }
 
+void cargo_core::move_local(rclcpp::Node::SharedPtr nh, const ParamMap &params) {
+    double dx_map = std::get<double>(params.at("x")); // map-frame delta X
+    double dy_map = std::get<double>(params.at("y")); // map-frame delta Y
+    double dz_map = std::get<double>(params.at("z")); // map-frame delta Z
+
+    RCLCPP_INFO_STREAM(nh->get_logger(), "--- Moving map-frame dx=" << dx_map 
+                       << " dy=" << dy_map << " dz=" << dz_map << " ---"); 
+
+    auto pub = nh->create_publisher<mavros_msgs::msg::PositionTarget>(
+        "/mavros/setpoint_raw/local", 10);
+
+    geometry_msgs::msg::PoseStamped pose_start;
+    get_topic_val(nh, pose_start, "/mavros/local_position/pose", std::chrono::seconds(1));
+
+    // Get yaw from current orientation
+    tf2::Quaternion q;
+    tf2::fromMsg(pose_start.pose.orientation, q);
+    double roll, pitch, yaw;
+    tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
+
+    // Rotate map-frame deltas into BODY frame
+    double dx_body =  cos(yaw)*dx_map + sin(yaw)*dy_map;
+    double dy_body = -sin(yaw)*dx_map + cos(yaw)*dy_map;
+    double dz_body = dz_map;
+
+    mavros_msgs::msg::PositionTarget post_target;
+    post_target.coordinate_frame = 8; // BODY_NED
+    post_target.type_mask = 1528;      // ignore velocity/acceleration/yaw
+    post_target.header.stamp = nh->now();
+
+    post_target.position.x = dx_body;
+    post_target.position.y = dy_body;
+    post_target.position.z = dz_body;
+
+    post_target.velocity.x = 0;
+    post_target.velocity.y = 0;
+    post_target.velocity.z = 0;
+
+    post_target.acceleration_or_force.x = 0.0;
+    post_target.acceleration_or_force.y = 0.0;
+    post_target.acceleration_or_force.z = 0.0;
+
+    post_target.yaw = 0.0;
+    post_target.yaw_rate = 0.0;
+
+    rclcpp::Rate rate(10); 
+    geometry_msgs::msg::PoseStamped pose_msg;
+
+    post_target.header.stamp = nh->now();
+    pub->publish(post_target);
+    rclcpp::spin_some(nh);
+    rate.sleep();
+
+
+    while (rclcpp::ok()) {
+        get_topic_val(nh, pose_msg, "/mavros/local_position/pose", std::chrono::seconds(1));
+
+        double dx_now = pose_msg.pose.position.x - pose_start.pose.position.x;
+        double dy_now = pose_msg.pose.position.y - pose_start.pose.position.y;
+        double dz_now = pose_msg.pose.position.z - pose_start.pose.position.z;
+
+        if (std::abs(dx_map - dx_now) < 0.1 &&
+            std::abs(dy_map - dy_now) < 0.1 &&
+            std::abs(dz_map - dz_now) < 0.1) {
+            break;
+        }
+
+    }
+
+    rclcpp::sleep_for(std::chrono::milliseconds(400));
+    RCLCPP_INFO_STREAM(nh->get_logger(), "--- Target reached ---");
+}
 
 void cargo_core::land(rclcpp::Node::SharedPtr nh, const ParamMap &params){
     RCLCPP_INFO(nh->get_logger(), "--- Land Initiated ---");
@@ -292,4 +364,5 @@ void cargo_core::register_all_commands(){
     register_command("TAKEOFF", takeoff);
     register_command("LAND", land);
     register_command("SWITCH_MODE",switch_mode);
+    register_command("MOVE", move_local); 
 }

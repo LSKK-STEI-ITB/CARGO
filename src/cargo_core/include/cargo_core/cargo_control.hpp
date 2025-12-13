@@ -11,6 +11,7 @@
 #include <mavros_msgs/srv/command_bool.hpp>
 #include <mavros_msgs/srv/command_tol.hpp>
 #include <mavros_msgs/srv/set_mode.hpp>
+#include <mavros_msgs/msg/position_target.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/node.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -20,7 +21,12 @@
 #include <std_srvs/srv/empty.hpp>
 #include <boost/algorithm/algorithm.hpp>
 #include <boost/algorithm/string.hpp>
+#include <geometry_msgs/msg/detail/pose__struct.hpp>
+#include <geometry_msgs/msg/detail/pose_stamped__struct.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "cargo_core/command_registry.hpp"
 
 namespace cargo_core{
@@ -31,6 +37,7 @@ namespace cargo_core{
     void arm_drone(rclcpp::Node::SharedPtr nh, const ParamMap &params); 
     void takeoff(rclcpp::Node::SharedPtr nh, const ParamMap &params); 
     void switch_mode(rclcpp::Node::SharedPtr nh, const ParamMap &params); 
+    void move_local(rclcpp::Node::SharedPtr nh, const ParamMap &params);
     void wait(rclcpp::Node::SharedPtr nh, const ParamMap &params); 
 
     // NOTE: Function without params need to add paramMap to fit the desc 

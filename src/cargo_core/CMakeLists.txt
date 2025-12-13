@@ -16,9 +16,11 @@ find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(yaml-cpp REQUIRED)
 find_package(mavros_msgs REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 
 # -------------------------------------------------------------------------
@@ -48,6 +50,9 @@ ament_target_dependencies(cargo_control
   std_srvs
   geometry_msgs
   mavros_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 # -------------------------------------------------------------------------
