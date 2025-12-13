@@ -7,6 +7,7 @@ SafetyChecker::SafetyChecker():Node("safety_node"){
     RCLCPP_INFO(this->get_logger(), "Safety Node Initialized."); 
     pub = this->create_publisher<std_msgs::msg::Bool>("/safety_node/active", 10);
     client_kill_cargo = this->create_client<std_srvs::srv::Empty>("/cargo_node/kill_all");
+    client_kill_mission = this->create_client<std_srvs::srv::Empty>("/mission_node/kill_all");
 }
 
 bool SafetyChecker::check_cargo_node(){

@@ -39,6 +39,7 @@ private:
     const std::string RC_STABILIZE_PWM = "LOW"; 
     const std::string RC_LOITER_PWM = "HIGH"; 
     rclcpp::Client<std_srvs::srv::Empty>::SharedPtr client_kill_cargo; 
+    rclcpp::Client<std_srvs::srv::Empty>::SharedPtr client_kill_mission; 
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pub; 
 
 };

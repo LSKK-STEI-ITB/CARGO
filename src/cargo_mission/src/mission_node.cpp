@@ -13,7 +13,22 @@ MissionNode::MissionNode()
         declare_parameter("mission_file", "mission.txt");
 
     loadMission(mission_file);
+
+    mission_service = this->create_service<std_srvs::srv::Empty>(
+        "/mission_node/kill_all", 
+        std::bind(&MissionNode::kill_node_callback, this, std::placeholders::_1, std::placeholders::_2)); 
+    RCLCPP_INFO(this->get_logger(), "Mission Node Initialized."); 
+
+    RCLCPP_INFO(this->get_logger(), "Task Started."); 
+
+
 }
+
+void MissionNode::kill_node_callback(const std::shared_ptr<std_srvs::srv::Empty::Request> request, std::shared_ptr<std_srvs::srv::Empty::Response> response){
+    RCLCPP_WARN(this->get_logger(), "--- Mission Node will be Killed ---");
+    rclcpp::shutdown();
+}
+
 
 void MissionNode::loadMission(const std::string &file)
 {

@@ -4,6 +4,9 @@
 #include <string>
 #include <unordered_map>
 #include "cargo_core/command_registry.hpp"
+#include "std_srvs/srv/empty.hpp"
+#include <std_srvs/srv/detail/empty__struct.hpp>
+
 
 struct MissionStep {
     std::string name;
@@ -16,6 +19,9 @@ public:
     void runMission();
 private:
     void loadMission(const std::string &file);
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr mission_service; 
+
+    void kill_node_callback(const std::shared_ptr<std_srvs::srv::Empty::Request> request, std::shared_ptr<std_srvs::srv::Empty::Response> response); 
 
     std::vector<MissionStep> steps_;
 };
