@@ -5,11 +5,13 @@
 
 SafetyChecker::SafetyChecker() : Node("safety_node") {
   RCLCPP_INFO(this->get_logger(), "Safety Node Initialized.");
+
   this->declare_parameter<std::string>("namespace", "rangga");
 
-  // Now read the actual value passed from launch/YAML
-  std::string name_space;
   this->get_parameter("namespace", name_space);
+
+  if (!name_space.empty() && name_space.front() == '/')
+    name_space.erase(0, 1);
 
   pub = this->create_publisher<std_msgs::msg::Bool>(
       "/" + name_space + "/safety_node/active", 10);
