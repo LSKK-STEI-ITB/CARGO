@@ -5,7 +5,11 @@ CargoNode::CargoNode() : Node("cargo_node") {
   // Kill node when service called
   RCLCPP_INFO(this->get_logger(), "Cargo Node Initialized.");
 
-  name_space = declare_parameter("namespace", "rangga");
+  this->declare_parameter<std::string>("namespace", "rangga");
+
+  // Now read the actual value passed from launch/YAML
+  std::string name_space;
+  this->get_parameter("namespace", name_space);
 
   cargo_service = this->create_service<std_srvs::srv::Empty>(
       "/" + name_space + "/cargo_node/kill_all",

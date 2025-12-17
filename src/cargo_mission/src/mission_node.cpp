@@ -11,7 +11,11 @@ MissionNode::MissionNode() : Node("cargo_mission") {
 
   loadMission(mission_file);
 
-  name_space = declare_parameter("namespace", "rangga");
+  this->declare_parameter<std::string>("namespace", "rangga");
+
+  // Now read the actual value passed from launch/YAML
+  std::string name_space;
+  this->get_parameter("namespace", name_space);
 
   mission_service = this->create_service<std_srvs::srv::Empty>(
       "/" + name_space + "/mission_node/kill_all",
