@@ -354,7 +354,7 @@ void cargo_core::initialize(rclcpp::Node::SharedPtr nh,
         if (msg.data) {
           std::string topic_name = "/" +
                                    nh->get_parameter("namespace").as_string() +
-                                   "safety_node/active";
+                                   "/safety_node/active";
           size_t pub_count = nh->count_publishers(topic_name);
           if (pub_count > 0) {
             RCLCPP_WARN(nh->get_logger(), "---Starting mission---");
@@ -372,7 +372,7 @@ void cargo_core::initialize(rclcpp::Node::SharedPtr nh,
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_sub;
   gps_sub = nh->create_subscription<sensor_msgs::msg::NavSatFix>(
       "/" + nh->get_parameter("namespace").as_string() +
-          " /global_position/global",
+          "/global_position/global",
       rclcpp::SensorDataQoS(), globalPositionCallback);
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr heading_sub;
   heading_sub = nh->create_subscription<std_msgs::msg::Float64>(
